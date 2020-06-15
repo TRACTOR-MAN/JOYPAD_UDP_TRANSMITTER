@@ -28,20 +28,20 @@ joypad_interface_c::joypad_interface_c( ) :
     file( fopen(device, "rb+") )
 {
     // read away stuff at the begining
-	//void *tmp = malloc(8*12*sizeof(char));
-	//fread(tmp, sizeof(char)*8*12, 1, file);
-	//free(tmp);
+    //void *tmp = malloc(8*12*sizeof(char));
+    //fread(tmp, sizeof(char)*8*12, 1, file);
+    //free(tmp);
 
     while(1) 
     {
         unsigned char packet[8];
         unsigned char key[4];	
 
-		fread( &packet, sizeof(char) * 8, 1, file );
+        fread( &packet, sizeof(char) * 8, 1, file );
         key[0] = packet[4];
-		key[1] = packet[5];
-		key[2] = packet[6];
-		key[3] = packet[7];
+        key[1] = packet[5];
+        key[2] = packet[6];
+        key[3] = packet[7];
 
         std::cout << "Key 0 = " << key[0] << std::endl;
         std::cout << "Key 1 = " << key[1] << std::endl;
