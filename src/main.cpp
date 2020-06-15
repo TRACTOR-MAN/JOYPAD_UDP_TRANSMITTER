@@ -29,5 +29,7 @@ extern "C"
  */
 int main ( void )
 {
+    joypad_interface_c joypad_interface;
+
     return EXIT_SUCCESS;
 }

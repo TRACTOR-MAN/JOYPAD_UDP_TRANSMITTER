@@ -1,6 +1,15 @@
 #ifndef JOYPAD_IF_H
 #define JOYPAD_IF_H
 
+// C modules
+extern "C"
+{
+    #include <linux/joystick.h>
+
+    // Joystick event struct, typedefined for compatibility with c++.
+    typedef js_event joystick_event;
+}
+
 /**************************************************************************
                  ___  _____  ___  _   _   ___  _____  ___ 
                 / __||_   _|| _ \| | | | / __||_   _|/ __|
@@ -44,6 +53,12 @@ struct virjoy_st
    
 };
 
+/**************************************************************************
+                   _   _  _  _  ___  ___   _  _  ___ 
+                  | | | || \| ||_ _|/ _ \ | \| |/ __|
+                  | |_| || .` | | || (_) || .` |\__ \
+                   \___/ |_|\_||___|\___/ |_|\_||___/
+**************************************************************************/
 // Virtual joystick union
 union virjoy_un
 {
@@ -70,8 +85,13 @@ class joypad_interface_c
 public:
     joypad_interface_c( );
     ~joypad_interface_c( ){ };
-};
 
+protected:
+    joystick_event joystick_event_s;
+    int length;
+    const char *device;
+    FILE *file;
+};
 
 
 #endif
