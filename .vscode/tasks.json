@@ -1,0 +1,63 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "BUILD ALL",
+            "type": "shell",
+            "command": "make -j6",
+            "options": {
+                "cwd": "${workspaceFolder}//build//obj"
+            },
+            "group": "build",
+            "problemMatcher": {
+                "base": "$gcc",
+            },
+            "dependsOn": ["CMAKE", "CLEAN"],
+            "dependsOrder": "sequence",
+            "presentation": {
+                "clear": true
+            }
+        },
+        {
+            "label": "BUILD UPDATED",
+            "type": "shell",
+            "command": "make -j6",
+            "options": {
+                "cwd": "${workspaceFolder}//build//obj"
+            },
+            "group": "build",
+            "problemMatcher": {
+                "base": "$gcc",
+            },
+            "dependsOn": ["CMAKE"],
+            "dependsOrder": "sequence",
+            "presentation": {
+                "clear": true
+            }
+        },
+        {
+            "label": "CLEAN",
+            "type": "shell",
+            "command": "make clean",
+            "options":
+            {
+                "cwd": "${workspaceFolder}//build//obj"
+            },
+            "group": "none",
+            "problemMatcher": []
+        },
+        {
+            "label": "CMAKE",
+            "type": "shell",
+            "command": "cmake ../",
+            "options":
+            {
+                "cwd": "${workspaceFolder}//build//obj"
+            },
+            "group": "none",
+            "problemMatcher": []
+        },
+    ]
+}
