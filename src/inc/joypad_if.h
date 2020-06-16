@@ -53,6 +53,11 @@ struct virjoy_st
    
 };
 
+struct axis_state 
+{
+    short x, y;
+};
+
 /**************************************************************************
                    _   _  _  _  ___  ___   _  _  ___ 
                   | | | || \| ||_ _|/ _ \ | \| |/ __|
@@ -83,14 +88,24 @@ union virjoy_un
 class joypad_interface_c
 {
 public:
-    joypad_interface_c( );
-    ~joypad_interface_c( ){ };
+    joypad_interface_c ( );
+    ~joypad_interface_c ( ){ };
+
+    // Member function for reading a joystick event
+    bool read_event ( void );
+    // Member function for returning the number of joystick axes
+    size_t get_axis_count ( void );
+    // Member function for returning the number of buttons on the controller
+    size_t get_button_count ( void );
+    // Member function for returning the axis state of the joystick axes
+    size_t get_axis_state ( void );
 
 protected:
     joystick_event joystick_event_s;
-    int length;
     const char *device;
     FILE *file;
+    axis_state axis_state_s[ 3 ];
+
 };
 
 

@@ -27,26 +27,113 @@ joypad_interface_c::joypad_interface_c( ) :
     device( "/dev/input/js0" ),
     file( fopen(device, "rb+") )
 {
-    // read away stuff at the begining
-    //void *tmp = malloc(8*12*sizeof(char));
-    //fread(tmp, sizeof(char)*8*12, 1, file);
-    //free(tmp);
-
-    while(1) 
+    // Check to see whether the file was successfully opened
+    if( file == nullptr )
     {
-        unsigned char packet[8];
-        unsigned char key[4];	
-
-        fread( &packet, sizeof(char) * 8, 1, file );
-        key[0] = packet[4];
-        key[1] = packet[5];
-        key[2] = packet[6];
-        key[3] = packet[7];
-
-        std::cout << "Key 0 = " << key[0] << std::endl;
-        std::cout << "Key 1 = " << key[1] << std::endl;
-        std::cout << "Key 2 = " << key[2] << std::endl;
-        std::cout << "Key 3 = " << key[3] << std::endl;
-                  
+        std::cout << "Could not access joystick, check it is connected" << std::endl;
     }
+    else
+    {
+        // All is good, file is open
+    }
+    
+    while( read_event( ) != false ) 
+    {
+        switch (joystick_event_s.type)
+        {
+            case JS_EVENT_BUTTON:
+                std::cout << " Button " << (uint16_t)joystick_event_s.number << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
+                break;
+            case JS_EVENT_AXIS:
+                size_t axis;
+                axis = get_axis_state( );
+                if (axis < 3)
+                    std::cout << " Axis " << axis << " " << axis_state_s[axis].x << " " << axis_state_s[axis].x << std::endl;
+                break;
+            default:
+                /* Ignore init events. */
+                break;
+        }
+    }
+}
+
+/*!
+ *  \author    Thomas Sutton
+ *  \version   1.0
+ *  \date      16/06/2020
+ *
+ *  \par       Description:
+ *             Member function for reading a joystick event
+ */
+bool joypad_interface_c::read_event ( void )
+{
+    ssize_t objects;
+
+    // Read the joystick event data structure from the joystick input file
+    objects = fread( &joystick_event_s, sizeof(joystick_event), 1, file );
+
+    if ( objects == 1 )
+        return true;
+    else
+        // Error, could not read full event. 
+        return false;
+}
+
+/*!
+ *  \author    Thomas Sutton
+ *  \version   1.0
+ *  \date      16/06/2020
+ *
+ *  \par       Description:
+ *             Member function for returning the number of joystick axes
+ */
+size_t joypad_interface_c::get_axis_count ( void )
+{
+    __u8 axes;
+
+    if (ioctl( fileno( file ), JSIOCGAXES, &axes) == -1)
+        return 0;
+
+    return axes;
+}
+
+/*!
+ *  \author    Thomas Sutton
+ *  \version   1.0
+ *  \date      16/06/2020
+ *
+ *  \par       Description:
+ *             Member function for returning the number of buttons on the controller
+ */
+size_t joypad_interface_c::get_button_count ( void )
+{
+    __u8 buttons;
+
+    if (ioctl( fileno( file ), JSIOCGBUTTONS, &buttons) == -1)
+        return 0;
+
+    return buttons;
+}
+
+/*!
+ *  \author    Thomas Sutton
+ *  \version   1.0
+ *  \date      16/06/2020
+ *
+ *  \par       Description:
+ *             Member function for returning the axis state of the joystick axes
+ */
+size_t joypad_interface_c::get_axis_state ( void )
+{
+    size_t axis = joystick_event_s.number / 2;
+
+    if (axis < 3)
+    {
+        if (joystick_event_s.number % 2 == 0)
+            axis_state_s[axis].x = joystick_event_s.value;
+        else
+            axis_state_s[axis].y = joystick_event_s.value;
+    }
+
+    return axis;
 }
