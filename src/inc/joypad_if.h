@@ -9,6 +9,30 @@ extern "C"
     // Joystick event struct, typedefined for compatibility with c++.
     typedef js_event joystick_event;
 }
+/**************************************************************************
+                         ___  _  _  _   _  __  __  ___ 
+                        | __|| \| || | | ||  \/  |/ __|
+                        | _| | .` || |_| || |\/| |\__ \
+                        |___||_|\_| \___/ |_|  |_||___/
+**************************************************************************/
+// button mappings
+enum button_mappings_et
+{
+    BUTTON_A,
+    BUTTON_B,
+    BUTTON_Y,
+    BUTTON_X,
+    BUTTON_TL,
+    BUTTON_TR,
+    BUTTON_BL,
+    BUTTON_BR,
+    BUTTON_SELECT,
+    BUTTON_START,
+    BUTTON_MODE,
+    BUTTON_THUMBL,
+    BUTTON_THUMBR,
+    NUM_BUTTONS
+};
 
 /**************************************************************************
                  ___  _____  ___  _   _   ___  _____  ___ 
@@ -16,41 +40,40 @@ extern "C"
                 \__ \  | |  |   /| |_| || (__   | |  \__ \
                 |___/  |_|  |_|_\ \___/  \___|  |_|  |___/
 **************************************************************************/
-// Virtual joystic struct
+// Virtual joystick struct
 struct virjoy_st
 {
-   //buttons
-   unsigned char VIRJOY_BTN_A         :1;
-   unsigned char VIRJOY_BTN_B         :1;
-   unsigned char VIRJOY_BTN_X         :1;
-   unsigned char VIRJOY_BTN_Y         :1;
-   unsigned char VIRJOY_BTN_TL        :1;
-   unsigned char VIRJOY_BTN_TR        :1;
-   unsigned char VIRJOY_BTN_THUMBL    :1;
-   unsigned char VIRJOY_BTN_THUMBR    :1;
+    //buttons
+    unsigned char VIRJOY_BTN_A         :1;
+    unsigned char VIRJOY_BTN_B         :1;
+    unsigned char VIRJOY_BTN_X         :1;
+    unsigned char VIRJOY_BTN_Y         :1;
+    unsigned char VIRJOY_BTN_TL        :1;
+    unsigned char VIRJOY_BTN_TR        :1;
+    unsigned char VIRJOY_BTN_THUMBL    :1;
+    unsigned char VIRJOY_BTN_THUMBR    :1;
    
-   unsigned char VIRJOY_BTN_DPAD_UP       :1;
-   unsigned char VIRJOY_BTN_DPAD_DOWN     :1;
-   unsigned char VIRJOY_BTN_DPAD_LEFT     :1;
-   unsigned char VIRJOY_BTN_DPAD_RIGHT    :1;
-   unsigned char VIRJOY_BTN_START         :1;
-   unsigned char VIRJOY_BTN_SELECT        :1;
-   unsigned char VIRJOY_BTN_MODE          :1;
-   unsigned char VIRJOY_PADDING_1         :1;
+    unsigned char VIRJOY_BTN_DPAD_UP       :1;
+    unsigned char VIRJOY_BTN_DPAD_DOWN     :1;
+    unsigned char VIRJOY_BTN_DPAD_LEFT     :1;
+    unsigned char VIRJOY_BTN_DPAD_RIGHT    :1;
+    unsigned char VIRJOY_BTN_START         :1;
+    unsigned char VIRJOY_BTN_SELECT        :1;
+    unsigned char VIRJOY_BTN_MODE          :1;
+    unsigned char VIRJOY_PADDING_1         :1;
 
-   //analogue (signed)
-   short VIRJOY_ABS_X;
-   short VIRJOY_ABS_Y;
-   short VIRJOY_ABS_RX;
-   short VIRJOY_ABS_RY;
-   short VIRJOY_ABS_LT;
-   short VIRJOY_ABS_RT;
-   short VIRJOY_ABS_HAT0X;
-   short VIRJOY_ABS_HAT0Y;
+    //analogue (signed)
+    int32_t VIRJOY_ABS_LX;
+    int32_t VIRJOY_ABS_LY;
+    int32_t VIRJOY_ABS_RX;
+    int32_t VIRJOY_ABS_RY;
+    int32_t VIRJOY_ABS_LB;
+    int32_t VIRJOY_ABS_RB;
+    short VIRJOY_ABS_HAT0X;
+    short VIRJOY_ABS_HAT0Y;
 
 
-   unsigned char VIRJOY_CHECKSUM;
-   
+    unsigned char VIRJOY_CHECKSUM;
 };
 
 struct axis_state 
@@ -89,7 +112,7 @@ class joypad_interface_c
 {
 public:
     joypad_interface_c ( );
-    ~joypad_interface_c ( ){ };
+    ~joypad_interface_c ( );
 
     // Member function for reading a joystick event
     bool read_event ( void );
@@ -99,13 +122,24 @@ public:
     size_t get_button_count ( void );
     // Member function for returning the axis state of the joystick axes
     size_t get_axis_state ( void );
+    // Member function for returning the axis state of the joystick dpad
+    void get_dpad_state ( void );
+    // Member function for mapping the digital buttons to the controller data structure
+    void map_digital_button ( void );
+    // map analog joystick
+    void map_analog_joystick ( void );
+    // virtual function for cleaning up the virjoy_u variable once it has been processed.
+    virtual void clean_virjoy_u ( void ){ };
 
 protected:
     joystick_event joystick_event_s;
     const char *device;
     FILE *file;
-    axis_state axis_state_s[ 3 ];
+    virjoy_un virjoy_u;
+    bool joystick_event_b;
 
+private:
+    const bool extended_debug_b;
 };
 
 
