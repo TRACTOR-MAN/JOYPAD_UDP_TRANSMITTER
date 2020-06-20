@@ -63,12 +63,12 @@ struct virjoy_st
     unsigned char VIRJOY_PADDING_1         :1;
 
     //analogue (signed)
-    int32_t VIRJOY_ABS_LX;
-    int32_t VIRJOY_ABS_LY;
-    int32_t VIRJOY_ABS_RX;
-    int32_t VIRJOY_ABS_RY;
-    int32_t VIRJOY_ABS_LB;
-    int32_t VIRJOY_ABS_RB;
+    short VIRJOY_ABS_LX;
+    short VIRJOY_ABS_LY;
+    short VIRJOY_ABS_RX;
+    short VIRJOY_ABS_RY;
+    short VIRJOY_ABS_LB;
+    short VIRJOY_ABS_RB;
     short VIRJOY_ABS_HAT0X;
     short VIRJOY_ABS_HAT0Y;
 
@@ -128,15 +128,24 @@ public:
     void map_digital_button ( void );
     // map analog joystick
     void map_analog_joystick ( void );
-    // virtual function for cleaning up the virjoy_u variable once it has been processed.
-    virtual void clean_virjoy_u ( void ){ };
+    // function for polling for joypad data
+    void poll_joypad_data ( void );
+    // Member function for exiting any active while loops
+    void exit_while_loops ( void );
+    // The joypad data union
+    virjoy_un virjoy_u;
+    // Joystick event flag
+    bool joystick_event_b;
+    // Exit program flag
+    bool exit_program_b;
+    // Data lock
+    bool data_lock_b;
 
 protected:
     joystick_event joystick_event_s;
     const char *device;
     FILE *file;
-    virjoy_un virjoy_u;
-    bool joystick_event_b;
+    bool exit_while_loop_b;
 
 private:
     const bool extended_debug_b;

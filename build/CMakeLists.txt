@@ -30,6 +30,7 @@ PRIVATE
 # ../src/
 ../src/main.cpp
 ../src/joypad_if.cpp
+../src/udp_client.cpp
 )
 
 # Set all of the include directories below
