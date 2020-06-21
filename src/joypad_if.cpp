@@ -351,8 +351,6 @@ void joypad_interface_c::poll_joypad_data ( void )
     // Sit in a while loop, (blocking mode) and pull out all joypad events
     while( (read_event( ) != false) && (exit_while_loop_b == false) ) 
     {
-        std::cout << (int16_t)joystick_event_s.number << " " << (int16_t)joystick_event_s.value << std::endl;
-
         switch (joystick_event_s.type)
         {
         case JS_EVENT_BUTTON:
