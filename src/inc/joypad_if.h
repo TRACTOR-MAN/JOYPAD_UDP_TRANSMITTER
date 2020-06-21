@@ -134,12 +134,8 @@ public:
     void exit_while_loops ( void );
     // The joypad data union
     virjoy_un virjoy_u;
-    // Joystick event flag
-    bool joystick_event_b;
     // Exit program flag
     bool exit_program_b;
-    // Data lock
-    bool data_lock_b;
 
 protected:
     joystick_event joystick_event_s;

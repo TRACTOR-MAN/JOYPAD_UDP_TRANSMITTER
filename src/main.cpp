@@ -122,8 +122,6 @@ static void UDP_thread_20_ms ( void )
     {
         udp_client->send_udp_data( joypad_interface->virjoy_u.raw, sizeof(virjoy_st) );
 
-        joypad_interface->joystick_event_b = false;
-
         // sleep for 20ms
         usleep(20000);
     }

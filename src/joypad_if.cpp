@@ -27,27 +27,16 @@
  */
 joypad_interface_c::joypad_interface_c( ) :
     virjoy_u( { } ),
-    joystick_event_b( false ),
     exit_program_b( false ),
-    data_lock_b( false ),
     joystick_event_s( { } ),
     device( "/dev/input/js0" ),
     file( fopen(device, "rb+") ),
     exit_while_loop_b( false ),
     extended_debug_b( true )
 {
-    // Initialise certain virjoy elems
-    if( data_lock_b != false )
-    {
-        while( data_lock_b )
-        {
-            // Wait
-        }
-    }
-    data_lock_b = true;
+    // Initialise the LB and RB data
     virjoy_u.virtualjoydata.VIRJOY_ABS_RB = -32767;
     virjoy_u.virtualjoydata.VIRJOY_ABS_LB = -32767;
-    data_lock_b = false;
 
     // Check to see whether the file was successfully opened
     if( file == nullptr )
@@ -152,59 +141,23 @@ void joypad_interface_c::get_dpad_state ( void )
         {
             if( joystick_event_s.value == -32767 )
             {
-                joystick_event_b = true;
-
                 if( extended_debug_b )
                     std::cout << "DPAD UP" << std::endl;
-
-                if( data_lock_b != false )
-                {
-                    while( data_lock_b )
-                    {
-                        // Wait
-                    }
-                }
-                data_lock_b = true;
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_UP = true;
-                data_lock_b = false;
             }
             else 
             if( joystick_event_s.value == 32767 )
             {
-                joystick_event_b = true;
                 if( extended_debug_b )
                     std::cout << "DPAD DOWN" << std::endl;
-
-
-                if( data_lock_b != false )
-                {
-                    while( data_lock_b )
-                    {
-                        // Wait
-                    }
-                }
-                data_lock_b = true;
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_DOWN = true;
-                data_lock_b = false;
             }
             else
             {
-                joystick_event_b = true;
                 if( extended_debug_b )
                     std::cout << "DPAD VERTI not pressed" << std::endl;
-
-                if( data_lock_b != false )
-                {
-                    while( data_lock_b )
-                    {
-                        // Wait
-                    }
-                }
-                data_lock_b = true;
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_UP = false;
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_DOWN = false;
-                data_lock_b = false;
-                
             }
         }
         else
@@ -212,57 +165,23 @@ void joypad_interface_c::get_dpad_state ( void )
         {
             if( joystick_event_s.value == -32767 )
             {
-                joystick_event_b = true;
                 if( extended_debug_b )
                     std::cout << "DPAD_LEFT" << std::endl;
-
-                if( data_lock_b != false )
-                {
-                    while( data_lock_b )
-                    {
-                        // Wait
-                    }
-                }
-                data_lock_b = true;
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_LEFT = true;
-                data_lock_b = false;
             }
             else 
             if( joystick_event_s.value == 32767 )
             {
-                joystick_event_b = true;
                 if( extended_debug_b )
                     std::cout << "DPAD_RIGHT" << std::endl;
-
-                if( data_lock_b != false )
-                {
-                    while( data_lock_b )
-                    {
-                        // Wait
-                    }
-                }
-                data_lock_b = true;
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_RIGHT = true;
-                data_lock_b = false;
             }
             else
             {
-                joystick_event_b = true;
                 if( extended_debug_b )
                     std::cout << "DPAD HORIZ not pressed" << std::endl;
-
-                if( data_lock_b != false )
-                {
-                    while( data_lock_b )
-                    {
-                        // Wait
-                    }
-                }
-                data_lock_b = true;
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_LEFT = false;
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_RIGHT = false;
-                data_lock_b = false;
-                
             }
         }
     }
@@ -283,97 +202,37 @@ void joypad_interface_c::map_digital_button ( void )
     case BUTTON_A:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_A" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
-        
-        if( data_lock_b != false )
-        {
-            while( data_lock_b )
-            {
-                // Wait
-            }
-        }
-        data_lock_b = true;
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_A = true : virjoy_u.virtualjoydata.VIRJOY_BTN_A = false);
-        data_lock_b = false;
         break;
 
     case BUTTON_B:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_B" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
-        
-        if( data_lock_b != false )
-        {
-            while( data_lock_b )
-            {
-                // Wait
-            }
-        }
-        data_lock_b = true;
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_B = true : virjoy_u.virtualjoydata.VIRJOY_BTN_B = false);
-        data_lock_b = false;
         break;
 
     case BUTTON_Y:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_Y" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
-        
-        if( data_lock_b != false )
-        {
-            while( data_lock_b )
-            {
-                // Wait
-            }
-        }
-        data_lock_b = true;
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_Y = true : virjoy_u.virtualjoydata.VIRJOY_BTN_Y = false);
-        data_lock_b = false;
         break;
 
     case BUTTON_X:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_X" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
-        
-        if( data_lock_b != false )
-        {
-            while( data_lock_b )
-            {
-                // Wait
-            }
-        }
-        data_lock_b = true;
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_X = true : virjoy_u.virtualjoydata.VIRJOY_BTN_X = false);
-        data_lock_b = false;
         break;
 
     case BUTTON_TL:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_TL" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
-        
-        if( data_lock_b != false )
-        {
-            while( data_lock_b )
-            {
-                // Wait
-            }
-        }
-        data_lock_b = true;
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_TL = true : virjoy_u.virtualjoydata.VIRJOY_BTN_TL = false);
-        data_lock_b = false;
         break;
 
     case BUTTON_TR:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_TR" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
-        
-        if( data_lock_b != false )
-        {
-            while( data_lock_b )
-            {
-                // Wait
-            }
-        }
-        data_lock_b = true;
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_TR = true : virjoy_u.virtualjoydata.VIRJOY_BTN_TR = false);
-        data_lock_b = false;
         break;
 
     case BUTTON_BL:
@@ -387,81 +246,31 @@ void joypad_interface_c::map_digital_button ( void )
     case BUTTON_SELECT:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_SELECT" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
-        
-        if( data_lock_b != false )
-        {
-            while( data_lock_b )
-            {
-                // Wait
-            }
-        }
-        data_lock_b = true;
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_SELECT = true : virjoy_u.virtualjoydata.VIRJOY_BTN_SELECT = false);
-        data_lock_b = false;
         break;
 
     case BUTTON_START:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_START" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
-        
-        if( data_lock_b != false )
-        {
-            while( data_lock_b )
-            {
-                // Wait
-            }
-        }
-        data_lock_b = true;
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_START = true : virjoy_u.virtualjoydata.VIRJOY_BTN_START = false);
-        data_lock_b = false;
         break;
 
     case BUTTON_MODE:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_MODE" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
-        
-        if( data_lock_b != false )
-        {
-            while( data_lock_b )
-            {
-                // Wait
-            }
-        }
-        data_lock_b = true;
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_MODE = true : virjoy_u.virtualjoydata.VIRJOY_BTN_MODE = false);
-        data_lock_b = false;
         break;
 
     case BUTTON_THUMBL:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_THUMBL" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
-        
-        if( data_lock_b != false )
-        {
-            while( data_lock_b )
-            {
-                // Wait
-            }
-        }
-        data_lock_b = true;
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_THUMBL = true : virjoy_u.virtualjoydata.VIRJOY_BTN_THUMBL = false);
-        data_lock_b = false;
         break;
 
     case BUTTON_THUMBR:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_THUMBR" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
-        
-        if( data_lock_b != false )
-        {
-            while( data_lock_b )
-            {
-                // Wait
-            }
-        }
-        data_lock_b = true;
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_THUMBR = true : virjoy_u.virtualjoydata.VIRJOY_BTN_THUMBR = false);
-        data_lock_b = false;
         break;
 
     default:
@@ -484,46 +293,19 @@ void joypad_interface_c::map_analog_joystick ( void )
         switch( joystick_event_s.number )
         {
         case 0:
-            if( data_lock_b != false )
-            {
-                while( data_lock_b )
-                {
-                    // Wait
-                }
-            }
-            data_lock_b = true;
             virjoy_u.virtualjoydata.VIRJOY_ABS_LX = joystick_event_s.value;
-            data_lock_b = false;
 
             if( extended_debug_b )
                 std::cout << " VIRJOY_ABS_LX" << " " << virjoy_u.virtualjoydata.VIRJOY_ABS_LX << std::endl;
             break;
         case 2:
-            if( data_lock_b != false )
-            {
-                while( data_lock_b )
-                {
-                    // Wait
-                }
-            }
-            data_lock_b = true;
             virjoy_u.virtualjoydata.VIRJOY_ABS_LB = joystick_event_s.value;
-            data_lock_b = false;
             
             if( extended_debug_b )
                 std::cout << " VIRJOY_ABS_LB" << " " << virjoy_u.virtualjoydata.VIRJOY_ABS_LB << std::endl;
             break;
         case 4:
-            if( data_lock_b != false )
-            {
-                while( data_lock_b )
-                {
-                    // Wait
-                }
-            }
-            data_lock_b = true;
             virjoy_u.virtualjoydata.VIRJOY_ABS_RX = joystick_event_s.value;
-            data_lock_b = false;
             
             if( extended_debug_b )
                 std::cout << " VIRJOY_ABS_RX" << " " << virjoy_u.virtualjoydata.VIRJOY_ABS_RX << std::endl;
@@ -535,46 +317,19 @@ void joypad_interface_c::map_analog_joystick ( void )
         switch( joystick_event_s.number )
         {
         case 1:
-            if( data_lock_b != false )
-            {
-                while( data_lock_b )
-                {
-                    // Wait
-                }
-            }
-            data_lock_b = true;
             virjoy_u.virtualjoydata.VIRJOY_ABS_LY = joystick_event_s.value;
-            data_lock_b = false;
             
             if( extended_debug_b )
                 std::cout << " VIRJOY_ABS_LY" << " " << virjoy_u.virtualjoydata.VIRJOY_ABS_LY << std::endl;
             break;
         case 5:
-            if( data_lock_b != false )
-            {
-                while( data_lock_b )
-                {
-                    // Wait
-                }
-            }
-            data_lock_b = true;
             virjoy_u.virtualjoydata.VIRJOY_ABS_RB = joystick_event_s.value;
-            data_lock_b = false;
             
             if( extended_debug_b )
                 std::cout << " VIRJOY_ABS_RB" << " " << virjoy_u.virtualjoydata.VIRJOY_ABS_RB << std::endl;
             break;
         case 3:
-            if( data_lock_b != false )
-            {
-                while( data_lock_b )
-                {
-                    // Wait
-                }
-            }
-            data_lock_b = true;
             virjoy_u.virtualjoydata.VIRJOY_ABS_RY = joystick_event_s.value;
-            data_lock_b = false;
             
             if( extended_debug_b )
                 std::cout << " VIRJOY_ABS_RY" << " " << virjoy_u.virtualjoydata.VIRJOY_ABS_RY << std::endl;
@@ -601,7 +356,6 @@ void joypad_interface_c::poll_joypad_data ( void )
         switch (joystick_event_s.type)
         {
         case JS_EVENT_BUTTON:
-            joystick_event_b = true;
             // Map the button press to the data structure
             map_digital_button( );
 
@@ -613,14 +367,12 @@ void joypad_interface_c::poll_joypad_data ( void )
             // Must be an analog axis
             if ( axis < 3 )
             {
-                joystick_event_b = true;
                 map_analog_joystick( );
             }
             // Must be the dpad
             else
             if( axis == 3 )
             {
-                joystick_event_b = true;
                 get_dpad_state( );
             }
             else
