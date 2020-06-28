@@ -1,6 +1,9 @@
 #ifndef JOYPAD_IF_H
 #define JOYPAD_IF_H
 
+// For mutex
+#include <mutex>
+
 // C modules
 extern "C"
 {
@@ -132,10 +135,16 @@ public:
     void poll_joypad_data ( void );
     // Member function for exiting any active while loops
     void exit_while_loops ( void );
-    // The joypad data union
-    virjoy_un virjoy_u;
+    // Member function for locking the joypad data mutex
+    void lock_joypad_mutex ( void );
+    // Member function for unlocking the joypad data mutex
+    void unlock_joypad_mutex ( void );
     // Exit program flag
     bool exit_program_b;
+    // The mutex ptr for joypad union data locks
+    std::mutex *joy_mutex;
+    // The joypad data union
+    virjoy_un virjoy_u;
 
 protected:
     joystick_event joystick_event_s;

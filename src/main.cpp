@@ -120,7 +120,16 @@ static void UDP_thread_20_ms ( void )
 {
     while( keep_running_b )
     {
-        udp_client->send_udp_data( joypad_interface->virjoy_u.raw, sizeof(virjoy_st) );
+        uint8_t lcl_joypad_array_au8[ sizeof(virjoy_st) ];
+
+        joypad_interface->lock_joypad_mutex( );
+        for( uint16_t i = 0U; (i < (sizeof(virjoy_st))); i++ )
+        {
+            lcl_joypad_array_au8[ i ] = joypad_interface->virjoy_u.raw[ i ];
+        }
+        joypad_interface->unlock_joypad_mutex( );
+
+        udp_client->send_udp_data( lcl_joypad_array_au8, sizeof(virjoy_st) );
 
         // sleep for 20ms
         usleep(20000);

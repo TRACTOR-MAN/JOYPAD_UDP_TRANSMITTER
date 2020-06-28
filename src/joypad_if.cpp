@@ -26,8 +26,9 @@
  *             Constructor for the joypad_interface_c class
  */
 joypad_interface_c::joypad_interface_c( ) :
-    virjoy_u( { } ),
     exit_program_b( false ),
+    joy_mutex( new std::mutex ),
+    virjoy_u( { } ),
     joystick_event_s( { } ),
     device( "/dev/input/js0" ),
     file( fopen(device, "rb+") ),
@@ -35,8 +36,10 @@ joypad_interface_c::joypad_interface_c( ) :
     extended_debug_b( true )
 {
     // Initialise the LB and RB data
+    joy_mutex->lock( );
     virjoy_u.virtualjoydata.VIRJOY_ABS_RB = -32767;
     virjoy_u.virtualjoydata.VIRJOY_ABS_LB = -32767;
+    joy_mutex->unlock( );
 
     // Check to see whether the file was successfully opened
     if( file == nullptr )
@@ -143,21 +146,27 @@ void joypad_interface_c::get_dpad_state ( void )
             {
                 if( extended_debug_b )
                     std::cout << "DPAD UP" << std::endl;
+                joy_mutex->lock( );
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_UP = true;
+                joy_mutex->unlock( );
             }
             else 
             if( joystick_event_s.value == 32767 )
             {
                 if( extended_debug_b )
                     std::cout << "DPAD DOWN" << std::endl;
+                joy_mutex->lock( );
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_DOWN = true;
+                joy_mutex->unlock( );
             }
             else
             {
                 if( extended_debug_b )
                     std::cout << "DPAD VERTI not pressed" << std::endl;
+                joy_mutex->lock( );
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_UP = false;
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_DOWN = false;
+                joy_mutex->unlock( );
             }
         }
         else
@@ -167,21 +176,27 @@ void joypad_interface_c::get_dpad_state ( void )
             {
                 if( extended_debug_b )
                     std::cout << "DPAD_LEFT" << std::endl;
+                joy_mutex->lock( );
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_LEFT = true;
+                joy_mutex->unlock( );
             }
             else 
             if( joystick_event_s.value == 32767 )
             {
                 if( extended_debug_b )
                     std::cout << "DPAD_RIGHT" << std::endl;
+                joy_mutex->lock( );
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_RIGHT = true;
+                joy_mutex->unlock( );
             }
             else
             {
                 if( extended_debug_b )
                     std::cout << "DPAD HORIZ not pressed" << std::endl;
+                joy_mutex->lock( );
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_LEFT = false;
                 virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_RIGHT = false;
+                joy_mutex->unlock( );
             }
         }
     }
@@ -202,37 +217,49 @@ void joypad_interface_c::map_digital_button ( void )
     case BUTTON_A:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_A" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
+        joy_mutex->lock( );
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_A = true : virjoy_u.virtualjoydata.VIRJOY_BTN_A = false);
+        joy_mutex->unlock( );
         break;
 
     case BUTTON_B:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_B" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
+        joy_mutex->lock( );
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_B = true : virjoy_u.virtualjoydata.VIRJOY_BTN_B = false);
+        joy_mutex->unlock( );
         break;
 
     case BUTTON_Y:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_Y" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
+        joy_mutex->lock( );
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_Y = true : virjoy_u.virtualjoydata.VIRJOY_BTN_Y = false);
+        joy_mutex->unlock( );
         break;
 
     case BUTTON_X:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_X" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
+        joy_mutex->lock( );
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_X = true : virjoy_u.virtualjoydata.VIRJOY_BTN_X = false);
+        joy_mutex->unlock( );
         break;
 
     case BUTTON_TL:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_TL" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
+        joy_mutex->lock( );
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_TL = true : virjoy_u.virtualjoydata.VIRJOY_BTN_TL = false);
+        joy_mutex->unlock( );
         break;
 
     case BUTTON_TR:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_TR" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
+        joy_mutex->lock( );
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_TR = true : virjoy_u.virtualjoydata.VIRJOY_BTN_TR = false);
+        joy_mutex->unlock( );
         break;
 
     case BUTTON_BL:
@@ -246,31 +273,41 @@ void joypad_interface_c::map_digital_button ( void )
     case BUTTON_SELECT:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_SELECT" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
+        joy_mutex->lock( );
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_SELECT = true : virjoy_u.virtualjoydata.VIRJOY_BTN_SELECT = false);
+        joy_mutex->unlock( );
         break;
 
     case BUTTON_START:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_START" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
+        joy_mutex->lock( );
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_START = true : virjoy_u.virtualjoydata.VIRJOY_BTN_START = false);
+        joy_mutex->unlock( );
         break;
 
     case BUTTON_MODE:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_MODE" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
+        joy_mutex->lock( );
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_MODE = true : virjoy_u.virtualjoydata.VIRJOY_BTN_MODE = false);
+        joy_mutex->unlock( );
         break;
 
     case BUTTON_THUMBL:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_THUMBL" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
+        joy_mutex->lock( );
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_THUMBL = true : virjoy_u.virtualjoydata.VIRJOY_BTN_THUMBL = false);
+        joy_mutex->unlock( );
         break;
 
     case BUTTON_THUMBR:
         if( extended_debug_b )
             std::cout << " VIRJOY_BTN_THUMBR" << " " << ((joystick_event_s.value != 0) ? "pressed" : "released") << std::endl;
+        joy_mutex->lock( );
         ((joystick_event_s.value != 0) ? virjoy_u.virtualjoydata.VIRJOY_BTN_THUMBR = true : virjoy_u.virtualjoydata.VIRJOY_BTN_THUMBR = false);
+        joy_mutex->unlock( );
         break;
 
     default:
@@ -293,22 +330,40 @@ void joypad_interface_c::map_analog_joystick ( void )
         switch( joystick_event_s.number )
         {
         case 0:
+            joy_mutex->lock( );
             virjoy_u.virtualjoydata.VIRJOY_ABS_LX = joystick_event_s.value;
+            joy_mutex->unlock( );
 
             if( extended_debug_b )
+            {
+                joy_mutex->lock( );
                 std::cout << " VIRJOY_ABS_LX" << " " << virjoy_u.virtualjoydata.VIRJOY_ABS_LX << std::endl;
+                joy_mutex->unlock( );
+            }
             break;
         case 2:
+            joy_mutex->lock( );
             virjoy_u.virtualjoydata.VIRJOY_ABS_LB = joystick_event_s.value;
-            
+            joy_mutex->unlock( );
+
             if( extended_debug_b )
+            {
+                joy_mutex->lock( );
                 std::cout << " VIRJOY_ABS_LB" << " " << virjoy_u.virtualjoydata.VIRJOY_ABS_LB << std::endl;
+                joy_mutex->unlock( );
+            }
             break;
         case 4:
+            joy_mutex->lock( );
             virjoy_u.virtualjoydata.VIRJOY_ABS_RX = joystick_event_s.value;
-            
+            joy_mutex->unlock( );
+
             if( extended_debug_b )
+            {
+                joy_mutex->lock( );
                 std::cout << " VIRJOY_ABS_RX" << " " << virjoy_u.virtualjoydata.VIRJOY_ABS_RX << std::endl;
+                joy_mutex->unlock( );
+            }
             break;
         }
     }
@@ -317,22 +372,40 @@ void joypad_interface_c::map_analog_joystick ( void )
         switch( joystick_event_s.number )
         {
         case 1:
+            joy_mutex->lock( );
             virjoy_u.virtualjoydata.VIRJOY_ABS_LY = joystick_event_s.value;
-            
+            joy_mutex->unlock( );
+
             if( extended_debug_b )
+            {
+                joy_mutex->lock( );
                 std::cout << " VIRJOY_ABS_LY" << " " << virjoy_u.virtualjoydata.VIRJOY_ABS_LY << std::endl;
+                joy_mutex->unlock( );
+            }
             break;
         case 5:
+            joy_mutex->lock( );
             virjoy_u.virtualjoydata.VIRJOY_ABS_RB = joystick_event_s.value;
-            
+            joy_mutex->unlock( );
+
             if( extended_debug_b )
+            {
+                joy_mutex->lock( );
                 std::cout << " VIRJOY_ABS_RB" << " " << virjoy_u.virtualjoydata.VIRJOY_ABS_RB << std::endl;
+                joy_mutex->unlock( );
+            }
             break;
         case 3:
+            joy_mutex->lock( );
             virjoy_u.virtualjoydata.VIRJOY_ABS_RY = joystick_event_s.value;
-            
+            joy_mutex->unlock( );
+
             if( extended_debug_b )
+            {
+                joy_mutex->lock( );
                 std::cout << " VIRJOY_ABS_RY" << " " << virjoy_u.virtualjoydata.VIRJOY_ABS_RY << std::endl;
+                joy_mutex->unlock( );
+            }
             break;
         }
     }
@@ -404,6 +477,33 @@ void joypad_interface_c::exit_while_loops ( void )
 /*!
  *  \author    Thomas Sutton
  *  \version   1.0
+ *  \date      28/06/2020
+ *
+ *  \par       Description:
+ *             Member locking the data mutex
+ */
+void joypad_interface_c::lock_joypad_mutex ( void )
+{
+    joy_mutex->lock( );
+}
+
+/*!
+ *  \author    Thomas Sutton
+ *  \version   1.0
+ *  \date      28/06/2020
+ *
+ *  \par       Description:
+ *             Member unlocking the data mutex
+ */
+void joypad_interface_c::unlock_joypad_mutex ( void )
+{
+    joy_mutex->unlock( );
+}
+
+
+/*!
+ *  \author    Thomas Sutton
+ *  \version   1.0
  *  \date      19/06/2020
  *
  *  \par       Description:
@@ -416,4 +516,7 @@ joypad_interface_c::~joypad_interface_c( )
     {
         fclose( file );
     }
+
+    // Delete the mutex
+    delete joy_mutex;
 }
