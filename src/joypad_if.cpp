@@ -26,7 +26,7 @@
  *  \par       Description:
  *             Constructor for the joypad_interface_c class
  */
-joypad_interface_c::joypad_interface_c( ) :
+joypad_interface_c::joypad_interface_c( const char * cfgfile ) :
 
     exit_program_b( false ),
     joy_mutex( new std::mutex ),
@@ -41,9 +41,9 @@ joypad_interface_c::joypad_interface_c( ) :
     virjoy_u.virtualjoydata.VIRJOY_ABS_LB = -32767;
     joy_mutex->unlock( );
 
-    if( parse_buttoncfg() )
+    if( parse_buttoncfg(&cfgfile) )
     {
-    	std::cout << "Failed to parse buttoncfg.cfg file" << std::endl;
+        std::cout << "Failed to parse buttoncfg.cfg file" << std::endl;
         exit_program_b = true;
     }
 
@@ -65,7 +65,7 @@ joypad_interface_c::joypad_interface_c( ) :
  *  \par       Description:
  *             Parse button config file
  */
-bool joypad_interface_c::parse_buttoncfg ( void )
+bool joypad_interface_c::parse_buttoncfg ( const char ** targetcfgfile )
 {
     FILE *fp;
     char * line = NULL;
@@ -75,64 +75,54 @@ bool joypad_interface_c::parse_buttoncfg ( void )
     unsigned int j = 0;
     unsigned int k = 0;
     int var;
-    char *homedir;
 
-    homedir = getenv("HOME");
-    strcat(homedir, "/.config/JOYPAD_UDP_TRANSMITTER/buttoncfg.cfg");
-
-    fp = fopen(homedir, "r");
+    fp = fopen(*targetcfgfile, "r");
     if (fp == NULL)
     {
-        std::cout << "Tried to open : " << homedir << "\n";
+        std::cout << "Tried to open : " << *targetcfgfile << "\n";
         return true;
     }
 
     while ((read = getline(&line, &len, fp)) != -1) 
     {
-    	if (line[0] == '#')
-    	{
-    		//std::cout << "got hash, skipping\n";
-    		continue;
-    	}
-    	else if (line[0] == '!')
-    	{
-    		//std::cout << "got ! marker.\n";
-    		break;
-    	}
-    	else
-    	{
+        if ((line[0] == '#') || (line[0] == '\n') || (line[0] == ' '))
+            continue;
+        else if (line[0] == '!')
+            break;
+        else
+        {
             if (i == 0)
             {
-            	//std::cout << line;
-            	//copy line to the device (note: -1 to remove the \n char)
-            	memcpy ( device, line, strlen(line) - 1 );
-            	//std::cout << device;
+                //std::cout << line;
+                //copy line to the device (note: -1 to remove the \n char)
+                memcpy ( device, line, strlen(line) - 1 );
+                //std::cout << device;
             }
             else
             {
-	            if (j < NUM_BUTTONS)
-	            {
-	            	var = atoi(line);
-	                //std::cout << "got : " << var << "\n";
-	                buttoncfg[j] = var;
-	                j++;
-	            }
-	            else if ( k < NUM_ANA_CTL)
-	            {
-            	    var = atoi(line);
+                if (j < NUM_BUTTONS)
+                {
+                    var = atoi(line);
+                    //std::cout << "got : " << var << "\n";
+                    buttoncfg[j] = var;
+                    j++;
+                }
+                else if ( k < NUM_ANA_CTL)
+                {
+                    var = atoi(line);
                     //std::cout << "got : " << var << "\n";
                     anacfg[k] = var;
                     k++;
-	            }
-	            else
-	            {
-	            	//out of range. do nothing.
-	            }
-	        }
+                }
+                else
+                {
+                    //out of range. do nothing.
+                }
+            }
 
-	        i++;
+            i++;
 
-    	}
+        }
     }
 
     fclose(fp);
@@ -392,7 +382,7 @@ void joypad_interface_c::map_digital_button ( void )
     }
     else
     {
-    	//do nothing
+        //do nothing
     }
 
 }

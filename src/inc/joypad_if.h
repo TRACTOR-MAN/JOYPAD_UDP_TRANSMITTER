@@ -128,11 +128,11 @@ union virjoy_un
 class joypad_interface_c
 {
 public:
-    joypad_interface_c ( );
+    joypad_interface_c( const char * cfgfile );
     ~joypad_interface_c ( );
    
     //parse external button config file
-    bool parse_buttoncfg ( void );
+    bool parse_buttoncfg ( const char ** targetcfgfile );
     // Member function for reading a joystick event
     bool read_event ( void );
     // Member function for returning the number of joystick axes
