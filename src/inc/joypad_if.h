@@ -37,6 +37,20 @@ enum button_mappings_et
     NUM_BUTTONS
 };
 
+// button mappings
+enum ana_ctl_mappings_et
+{
+    ANA_LT,
+    ANA_RT,
+    ANA_DPAD_X,
+    ANA_DPAD_Y,
+    ANA_LSTICK_X,
+    ANA_LSTICK_Y,
+    ANA_RSTICK_X,
+    ANA_RSTICK_Y,
+    NUM_ANA_CTL
+};
+
 /**************************************************************************
                  ___  _____  ___  _   _   ___  _____  ___ 
                 / __||_   _|| _ \| | | | / __||_   _|/ __|
@@ -116,7 +130,9 @@ class joypad_interface_c
 public:
     joypad_interface_c ( );
     ~joypad_interface_c ( );
-
+   
+    //parse external button config file
+    bool parse_buttoncfg ( void );
     // Member function for reading a joystick event
     bool read_event ( void );
     // Member function for returning the number of joystick axes
@@ -145,15 +161,20 @@ public:
     std::mutex *joy_mutex;
     // The joypad data union
     virjoy_un virjoy_u;
+    // Array to store read button map
+    int buttoncfg[NUM_BUTTONS];
+    // Array to store read analog map
+    int anacfg[NUM_ANA_CTL];
 
 protected:
-    joystick_event joystick_event_s;
-    const char *device;
+    char device[255];
     FILE *file;
+    joystick_event joystick_event_s;
     bool exit_while_loop_b;
 
 private:
     const bool extended_debug_b;
+
 };
 
 
