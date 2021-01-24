@@ -8,6 +8,7 @@
 #include "joypad_if.h"
 #include "udp_client.h"
 #include <thread>
+#include <string.h>
 
 extern "C"
 {
@@ -58,11 +59,20 @@ int main ( int argc, char * argv[] )
     sigIntHandler.sa_handler = &int_handler;
     sigemptyset(&sigIntHandler.sa_mask);
     sigIntHandler.sa_flags = 0;
-
-    if( argc == 3 )
+    const char *cfgloc;
+    
+    if( argc >= 3 )
     {
+        // check if custom cfg has been passed
+        if( argc >= 4 )
+            //set config to custom config file
+            cfgloc = *(argv + 3);
+        else
+            //set config to default home dir location
+            cfgloc = strcat(getenv("HOME"), "/.config/JOYPAD_UDP_TRANSMITTER/buttoncfg.cfg");    
+        
         // new the object pointers
-        joypad_interface = new joypad_interface_c;
+        joypad_interface = new joypad_interface_c( cfgloc );
         udp_client = new udp_client_c( argv[1], argv[2] );
 
         if( joypad_interface->exit_program_b == false)
