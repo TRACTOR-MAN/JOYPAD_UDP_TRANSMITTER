@@ -213,64 +213,60 @@ size_t joypad_interface_c::get_axis_state ( void )
  */
 void joypad_interface_c::get_dpad_state ( void )
 {
-    if( joystick_event_s.number == anacfg[ANA_DPAD_X] )
+    if( joystick_event_s.number == anacfg[ANA_DPAD_Y] )
     {
-        if( joystick_event_s.value == -32767 )
+        joy_mutex->lock( );
+        virjoy_u.virtualjoydata.VIRJOY_ABS_HAT0Y = joystick_event_s.value;
+        
+        if( joystick_event_s.value <= -16384 )
         {
             if( extended_debug_b )
                 std::cout << "DPAD UP" << std::endl;
-            joy_mutex->lock( );
             virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_UP = true;
-            joy_mutex->unlock( );
         }
         else 
-        if( joystick_event_s.value == 32767 )
+        if( joystick_event_s.value >= 16384 )
         {
             if( extended_debug_b )
                 std::cout << "DPAD DOWN" << std::endl;
-            joy_mutex->lock( );
             virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_DOWN = true;
-            joy_mutex->unlock( );
         }
         else
         {
             if( extended_debug_b )
                 std::cout << "DPAD VERTI not pressed" << std::endl;
-            joy_mutex->lock( );
             virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_UP = false;
             virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_DOWN = false;
-            joy_mutex->unlock( );
         }
+        joy_mutex->unlock( );
     }
     else
-    if( joystick_event_s.number == anacfg[ANA_DPAD_Y] )
+    if( joystick_event_s.number == anacfg[ANA_DPAD_X] )
     {
-        if( joystick_event_s.value == -32767 )
+        joy_mutex->lock( );
+        virjoy_u.virtualjoydata.VIRJOY_ABS_HAT0X = joystick_event_s.value;
+        
+        if( joystick_event_s.value <= -16384 )
         {
             if( extended_debug_b )
                 std::cout << "DPAD_LEFT" << std::endl;
-            joy_mutex->lock( );
             virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_LEFT = true;
-            joy_mutex->unlock( );
         }
         else 
-        if( joystick_event_s.value == 32767 )
+        if( joystick_event_s.value >= 16384 )
         {
             if( extended_debug_b )
                 std::cout << "DPAD_RIGHT" << std::endl;
-            joy_mutex->lock( );
             virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_RIGHT = true;
-            joy_mutex->unlock( );
         }
         else
         {
             if( extended_debug_b )
                 std::cout << "DPAD HORIZ not pressed" << std::endl;
-            joy_mutex->lock( );
             virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_LEFT = false;
             virjoy_u.virtualjoydata.VIRJOY_BTN_DPAD_RIGHT = false;
-            joy_mutex->unlock( );
         }
+        joy_mutex->unlock( );
     }
 }
 
